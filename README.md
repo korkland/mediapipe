@@ -1,3 +1,5 @@
+Debugable version of Holistic Tracking in Windows, using bazel build and vs code
+
 ---
 layout: default
 title: Home
