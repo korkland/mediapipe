@@ -147,6 +147,7 @@ absl::Status RunMPPGraph() {
 }
 
 int main(int argc, char** argv) {
+  std::cout << "Test Console\n";
   google::InitGoogleLogging(argv[0]);
   absl::ParseCommandLine(argc, argv);
   absl::Status run_status = RunMPPGraph();
