@@ -867,9 +867,11 @@ absl::Status TfLiteInferenceCalculator::LoadModel(CalculatorContext* cc) {
 
 absl::StatusOr<Packet> TfLiteInferenceCalculator::GetModelAsPacket(
     const CalculatorContext& cc) {
-  const auto& options =
-      cc.Options<mediapipe::TfLiteInferenceCalculatorOptions>();
+  const auto& options = cc.Options<mediapipe::TfLiteInferenceCalculatorOptions>();
   if (!options.model_path().empty()) {
+#ifdef _DEBUG
+    // std::cout << "tflite_inference_calculator: " << options.model_path() << std::endl; // #chen
+#endif
     return TfLiteModelLoader::LoadFromPath(options.model_path());
   }
   if (cc.InputSidePackets().HasTag("MODEL")) {

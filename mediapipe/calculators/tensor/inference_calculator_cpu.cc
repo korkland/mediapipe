@@ -86,16 +86,22 @@ absl::Status InferenceCalculatorCpuImpl::UpdateContract(
   RET_CHECK(!options.model_path().empty() ^ kSideInModel(cc).IsConnected())
       << "Either model as side packet or model path in options is required.";
 
+  const std::string& model_path = options.model_path(); 
+  // std::cout << model_path << std::endl; // #chen
+
   return absl::OkStatus();
 }
 
 absl::Status InferenceCalculatorCpuImpl::Open(CalculatorContext* cc) {
+  const auto& options = cc->Options<mediapipe::InferenceCalculatorOptions>();
   MP_RETURN_IF_ERROR(LoadModel(cc));
   MP_RETURN_IF_ERROR(LoadDelegate(cc));
   return absl::OkStatus();
 }
 
 absl::Status InferenceCalculatorCpuImpl::Process(CalculatorContext* cc) {
+
+  const auto start = absl::GetCurrentTimeNanos(); // #chen
   if (kInTensors(cc).IsEmpty()) {
     return absl::OkStatus();
   }
@@ -130,6 +136,13 @@ absl::Status InferenceCalculatorCpuImpl::Process(CalculatorContext* cc) {
                 output_tensors->back().bytes());
   }
   kOutTensors(cc).Send(std::move(output_tensors));
+  
+  // #chen
+  const auto end = absl::GetCurrentTimeNanos();
+  const auto duration = end-start;
+  std::string model_path = cc->Options<mediapipe::InferenceCalculatorOptions>().model_path();
+  LOG(ERROR) << model_path << " : " << duration * 1e-6;
+
   return absl::OkStatus();
 }
 

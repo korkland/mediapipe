@@ -233,7 +233,9 @@ absl::Status CalculatorGraph::InitializeCalculatorNodes() {
 
   // Use a local variable to avoid needing to lock errors_.
   std::vector<absl::Status> errors;
-
+#ifdef _DEBUG
+  //std::cout << "Calculators:\n"; // #chen
+#endif
   // Create and initialize all the nodes in the graph.
   for (int node_id = 0; node_id < validated_graph_->CalculatorInfos().size();
        ++node_id) {
@@ -253,6 +255,9 @@ absl::Status CalculatorGraph::InitializeCalculatorNodes() {
       // Collect as many errors as we can before failing.
       errors.push_back(result);
     }
+#ifdef _DEBUG
+    //std::cout << nodes_[node_id]->GetCalculatorName() << std::endl; // #chen
+#endif
   }
   if (!errors.empty()) {
     return tool::CombinedStatus(
@@ -391,6 +396,11 @@ absl::Status CalculatorGraph::InitializeDefaultExecutor(
         std::max({validated_graph_->Config().node().size(),
                   validated_graph_->Config().packet_generator().size(), 1}));
   }
+
+  #ifdef _DEBUG 
+    num_threads = 1;
+    std::cout << "num of threads set to 1\n"; // #chen
+  #endif
   MP_RETURN_IF_ERROR(
       CreateDefaultThreadPool(default_executor_options, num_threads));
   return absl::OkStatus();

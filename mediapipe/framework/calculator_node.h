@@ -88,6 +88,7 @@ class CalculatorNode {
   // \"foo_bar_input\"]" for sink nodes.  This name should be used in error
   // messages where more context info is helpful.
   std::string DebugName() const;
+  const std::string GetCalculatorName() const {return name_;}
 
   // Name of the executor which the node will execute on.  If empty, the node
   // will execute on the default executor.

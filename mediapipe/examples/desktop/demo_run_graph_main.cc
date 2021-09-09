@@ -42,14 +42,12 @@ ABSL_FLAG(std::string, output_video_path, "",
 
 absl::Status RunMPPGraph() {
   std::string calculator_graph_config_contents;
-  MP_RETURN_IF_ERROR(mediapipe::file::GetContents(
-      absl::GetFlag(FLAGS_calculator_graph_config_file),
-      &calculator_graph_config_contents));
-  LOG(INFO) << "Get calculator graph config contents: "
-            << calculator_graph_config_contents;
-  mediapipe::CalculatorGraphConfig config =
-      mediapipe::ParseTextProtoOrDie<mediapipe::CalculatorGraphConfig>(
-          calculator_graph_config_contents);
+  MP_RETURN_IF_ERROR(mediapipe::file::GetContents(absl::GetFlag(FLAGS_calculator_graph_config_file), &calculator_graph_config_contents));
+  LOG(INFO) << "Get calculator graph config contents: " << calculator_graph_config_contents;
+#ifdef _DEBUG
+  //std::cout << calculator_graph_config_contents << std::endl; // #chen
+ #endif
+  mediapipe::CalculatorGraphConfig config = mediapipe::ParseTextProtoOrDie<mediapipe::CalculatorGraphConfig>(calculator_graph_config_contents);
 
   LOG(INFO) << "Initialize the calculator graph.";
   mediapipe::CalculatorGraph graph;
@@ -77,8 +75,7 @@ absl::Status RunMPPGraph() {
   }
 
   LOG(INFO) << "Start running the calculator graph.";
-  ASSIGN_OR_RETURN(mediapipe::OutputStreamPoller poller,
-                   graph.AddOutputStreamPoller(kOutputStream));
+  ASSIGN_OR_RETURN(mediapipe::OutputStreamPoller poller, graph.AddOutputStreamPoller(kOutputStream));
   MP_RETURN_IF_ERROR(graph.StartRun({}));
 
   LOG(INFO) << "Start grabbing and processing frames.";
@@ -100,25 +97,24 @@ absl::Status RunMPPGraph() {
     if (!load_video) {
       cv::flip(camera_frame, camera_frame, /*flipcode=HORIZONTAL*/ 1);
     }
+    //cv::imshow(kWindowName, camera_frame);cv::waitKey(0);
 
     // Wrap Mat into an ImageFrame.
-    auto input_frame = absl::make_unique<mediapipe::ImageFrame>(
-        mediapipe::ImageFormat::SRGB, camera_frame.cols, camera_frame.rows,
-        mediapipe::ImageFrame::kDefaultAlignmentBoundary);
+    auto input_frame = absl::make_unique<mediapipe::ImageFrame>(mediapipe::ImageFormat::SRGB, camera_frame.cols, camera_frame.rows, mediapipe::ImageFrame::kDefaultAlignmentBoundary);
     cv::Mat input_frame_mat = mediapipe::formats::MatView(input_frame.get());
     camera_frame.copyTo(input_frame_mat);
 
     // Send image packet into the graph.
-    size_t frame_timestamp_us =
-        (double)cv::getTickCount() / (double)cv::getTickFrequency() * 1e6;
-    MP_RETURN_IF_ERROR(graph.AddPacketToInputStream(
-        kInputStream, mediapipe::Adopt(input_frame.release())
-                          .At(mediapipe::Timestamp(frame_timestamp_us))));
+    size_t frame_timestamp_us = (double)cv::getTickCount() / (double)cv::getTickFrequency() * 1e6;
+    MP_RETURN_IF_ERROR(graph.AddPacketToInputStream(kInputStream, mediapipe::Adopt(input_frame.release()).At(mediapipe::Timestamp(frame_timestamp_us))));
 
     // Get the graph result packet, or stop if that fails.
     mediapipe::Packet packet;
     if (!poller.Next(&packet)) break;
     auto& output_frame = packet.Get<mediapipe::ImageFrame>();
+
+    //size_t frame_timestamp_us_end = (double)cv::getTickCount() / (double)cv::getTickFrequency() * 1e6;
+    //std::cout << (int64_t)frame_timestamp_us_end - (int64_t)frame_timestamp_us << std::endl;
 
     // Convert back to opencv for display or saving.
     cv::Mat output_frame_mat = mediapipe::formats::MatView(&output_frame);
@@ -126,9 +122,7 @@ absl::Status RunMPPGraph() {
     if (save_video) {
       if (!writer.isOpened()) {
         LOG(INFO) << "Prepare video writer.";
-        writer.open(absl::GetFlag(FLAGS_output_video_path),
-                    mediapipe::fourcc('a', 'v', 'c', '1'),  // .mp4
-                    capture.get(cv::CAP_PROP_FPS), output_frame_mat.size());
+        writer.open(absl::GetFlag(FLAGS_output_video_path), mediapipe::fourcc('a', 'v', 'c', '1'), capture.get(cv::CAP_PROP_FPS), output_frame_mat.size());
         RET_CHECK(writer.isOpened());
       }
       writer.write(output_frame_mat);
@@ -147,9 +141,10 @@ absl::Status RunMPPGraph() {
 }
 
 int main(int argc, char** argv) {
-  std::cout << "Test Console\n";
   google::InitGoogleLogging(argv[0]);
   absl::ParseCommandLine(argc, argv);
+  LOG(INFO) << "\n\n\n\n\n\nTEST\n\n\n\n\n\n\n\n.";
+
   absl::Status run_status = RunMPPGraph();
   if (!run_status.ok()) {
     LOG(ERROR) << "Failed to run the graph: " << run_status.message();

@@ -11,6 +11,16 @@
                 "kind": "build",
                 "isDefault": true
             },
+        },
+
+        {
+            "label": "Holistic Release Build",
+            "type": "shell",
+            "command": "bazel build --experimental_enable_runfiles -c opt --define MEDIAPIPE_DISABLE_GPU=1 --define MEDIAPIPE_PROFILING=1 --action_env PYTHON_BIN_PATH=\"C://Users//chend//AppData//Local//Programs//Python//Python37//python.exe\" mediapipe/examples/desktop/holistic_tracking:holistic_tracking_cpu",
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
         }
     ]
 }

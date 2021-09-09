@@ -58,7 +58,13 @@ class InferenceCalculatorSelectorImpl
 absl::StatusOr<Packet<TfLiteModelPtr>> InferenceCalculator::GetModelAsPacket(
     CalculatorContext* cc) {
   const auto& options = cc->Options<mediapipe::InferenceCalculatorOptions>();
+  
   if (!options.model_path().empty()) {
+    
+  #ifdef _DEBUG
+    //std::cout << "inference_calculator: " << options.model_path() << std::endl; // #chen
+    std::string model_path = options.model_path();
+  #endif
     return TfLiteModelLoader::LoadFromPath(options.model_path());
   }
   if (!kSideInModel(cc).IsEmpty()) return kSideInModel(cc);

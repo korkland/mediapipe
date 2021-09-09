@@ -15,6 +15,21 @@
             },
             "stopAtEntry": false,
             "preLaunchTask": "Holistic Debug Build",
+            "cwd": "${workspaceFolder}/bazel-mediapipe",
+            "environment": [],
+            "console": "externalTerminal"
+        },
+        {
+            "name": "Release",
+            "type": "cppvsdbg",
+            "request": "launch",
+            "program": "${workspaceFolder}/bazel-out/x64_windows-opt/bin/mediapipe/examples/desktop/holistic_tracking/holistic_tracking_cpu.exe",
+            "args": ["--calculator_graph_config_file=${workspaceFolder}/mediapipe/graphs/holistic_tracking/holistic_tracking_cpu.pbtxt"],
+            "sourceFileMap": {
+                "C:/Users/chend/_bazel_chend/vmp7y5m5/execroot/mediapipe/": "${workspaceFolder}",
+            },
+            "stopAtEntry": false,
+            "preLaunchTask": "Holistic Release Build",
             "cwd": "${workspaceFolder}",
             "environment": [],
             "console": "externalTerminal"

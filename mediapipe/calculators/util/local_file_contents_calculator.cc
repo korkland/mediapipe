@@ -63,13 +63,11 @@ class LocalFileContentsCalculator : public CalculatorBase {
                  cc->OutputSidePackets().NumEntries(kContentsTag))
         << "Same number of input streams and output streams is required.";
 
-    for (CollectionItemId id = cc->InputSidePackets().BeginId(kFilePathTag);
-         id != cc->InputSidePackets().EndId(kFilePathTag); ++id) {
+    for (CollectionItemId id = cc->InputSidePackets().BeginId(kFilePathTag); id != cc->InputSidePackets().EndId(kFilePathTag); ++id) {
       cc->InputSidePackets().Get(id).Set<std::string>();
     }
 
-    for (CollectionItemId id = cc->OutputSidePackets().BeginId(kContentsTag);
-         id != cc->OutputSidePackets().EndId(kContentsTag); ++id) {
+    for (CollectionItemId id = cc->OutputSidePackets().BeginId(kContentsTag); id != cc->OutputSidePackets().EndId(kContentsTag); ++id) {
       cc->OutputSidePackets().Get(id).Set<std::string>();
     }
 
@@ -82,17 +80,15 @@ class LocalFileContentsCalculator : public CalculatorBase {
     auto options = cc->Options<mediapipe::LocalFileContentsCalculatorOptions>();
 
     // Number of inputs and outpus is the same according to the contract.
-    for (; input_id != cc->InputSidePackets().EndId(kFilePathTag);
-         ++input_id, ++output_id) {
-      std::string file_path =
-          cc->InputSidePackets().Get(input_id).Get<std::string>();
+    for (; input_id != cc->InputSidePackets().EndId(kFilePathTag); ++input_id, ++output_id) {
+      std::string file_path = cc->InputSidePackets().Get(input_id).Get<std::string>();
       ASSIGN_OR_RETURN(file_path, PathToResourceAsFile(file_path));
-
+      #ifdef _DEBUG
+      std::cout << "\nlocal_file_contents_calculator.cc : " << file_path << "\n\n"; // #chen
+      #endif
       std::string contents;
-      MP_RETURN_IF_ERROR(GetResourceContents(
-          file_path, &contents, /*read_as_binary=*/!options.text_mode()));
-      cc->OutputSidePackets().Get(output_id).Set(
-          MakePacket<std::string>(std::move(contents)));
+      MP_RETURN_IF_ERROR(GetResourceContents(file_path, &contents, /*read_as_binary=*/!options.text_mode()));
+      cc->OutputSidePackets().Get(output_id).Set(MakePacket<std::string>(std::move(contents)));
     }
     return absl::OkStatus();
   }
