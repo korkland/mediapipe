@@ -27,6 +27,9 @@
 #include "mediapipe/framework/port/parse_text_proto.h"
 #include "mediapipe/framework/port/status.h"
 
+#include <sstream>
+#include <iomanip>
+
 constexpr char kInputStream[] = "input_video";
 constexpr char kOutputStream[] = "output_video";
 constexpr char kWindowName[] = "MediaPipe";
@@ -44,26 +47,24 @@ absl::Status RunMPPGraph() {
   std::string calculator_graph_config_contents;
   MP_RETURN_IF_ERROR(mediapipe::file::GetContents(absl::GetFlag(FLAGS_calculator_graph_config_file), &calculator_graph_config_contents));
   LOG(INFO) << "Get calculator graph config contents: " << calculator_graph_config_contents;
-#ifdef _DEBUG
-  //std::cout << calculator_graph_config_contents << std::endl; // #chen
- #endif
   mediapipe::CalculatorGraphConfig config = mediapipe::ParseTextProtoOrDie<mediapipe::CalculatorGraphConfig>(calculator_graph_config_contents);
 
   LOG(INFO) << "Initialize the calculator graph.";
   mediapipe::CalculatorGraph graph;
   MP_RETURN_IF_ERROR(graph.Initialize(config));
+  bool load_video = !absl::GetFlag(FLAGS_input_video_path).empty();
+  cv::VideoWriter writer;
 
   LOG(INFO) << "Initialize the camera or load the video.";
   cv::VideoCapture capture;
-  const bool load_video = !absl::GetFlag(FLAGS_input_video_path).empty();
+  
   if (load_video) {
     capture.open(absl::GetFlag(FLAGS_input_video_path));
   } else {
     capture.open(0);
   }
   RET_CHECK(capture.isOpened());
-
-  cv::VideoWriter writer;
+  
   const bool save_video = !absl::GetFlag(FLAGS_output_video_path).empty();
   if (!save_video) {
     cv::namedWindow(kWindowName, /*flags=WINDOW_AUTOSIZE*/ 1);
@@ -71,8 +72,8 @@ absl::Status RunMPPGraph() {
     capture.set(cv::CAP_PROP_FRAME_WIDTH, 640);
     capture.set(cv::CAP_PROP_FRAME_HEIGHT, 480);
     capture.set(cv::CAP_PROP_FPS, 30);
-#endif
   }
+  #endif
 
   LOG(INFO) << "Start running the calculator graph.";
   ASSIGN_OR_RETURN(mediapipe::OutputStreamPoller poller, graph.AddOutputStreamPoller(kOutputStream));
@@ -80,10 +81,21 @@ absl::Status RunMPPGraph() {
 
   LOG(INFO) << "Start grabbing and processing frames.";
   bool grab_frames = true;
+  int frame_idx = 0;
   while (grab_frames) {
     // Capture opencv camera or video frame.
     cv::Mat camera_frame_raw;
+    #ifdef _DEBUG
+      load_video = true;
+      const std::string frames_path = "C:/3D_data/debug_out/Input_frames/720p/inp_frame_";
+      std::stringstream ss;
+      ss << std::setfill('0') << std::setw(6) << frame_idx;
+      const std::string full_path = frames_path + ss.str() + ".png";
+      camera_frame_raw = cv::imread(full_path, cv::IMREAD_COLOR);
+    #else
     capture >> camera_frame_raw;
+    #endif
+
     if (camera_frame_raw.empty()) {
       if (!load_video) {
         LOG(INFO) << "Ignore empty frames from camera.";
@@ -95,7 +107,7 @@ absl::Status RunMPPGraph() {
     cv::Mat camera_frame;
     cv::cvtColor(camera_frame_raw, camera_frame, cv::COLOR_BGR2RGB);
     if (!load_video) {
-      cv::flip(camera_frame, camera_frame, /*flipcode=HORIZONTAL*/ 1);
+      cv::flip(camera_frame, camera_frame, /*flipcode=HORIZONTAL*/ 1); //#chen what the hack is that?
     }
     //cv::imshow(kWindowName, camera_frame);cv::waitKey(0);
 
@@ -132,6 +144,7 @@ absl::Status RunMPPGraph() {
       const int pressed_key = cv::waitKey(5);
       if (pressed_key >= 0 && pressed_key != 255) grab_frames = false;
     }
+    frame_idx++;
   }
 
   LOG(INFO) << "Shutting down.";

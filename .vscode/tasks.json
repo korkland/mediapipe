@@ -21,6 +21,66 @@
                 "kind": "build",
                 "isDefault": true
             },
-        }
+        },
+
+        {
+            "label": "Pose Debug Build",
+            "type": "shell",
+            "command": "bazel build --strip=never --experimental_enable_runfiles -c dbg --define MEDIAPIPE_DISABLE_GPU=1 --action_env PYTHON_BIN_PATH=\"C://Users//chend//AppData//Local//Programs//Python//Python37//python.exe\" mediapipe/examples/desktop/pose_tracking:pose_tracking_cpu",
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+        },
+
+        {
+            "label": "Pose Release Build",
+            "type": "shell",
+            "command": "bazel build --experimental_enable_runfiles -c opt --define MEDIAPIPE_DISABLE_GPU=1 --define MEDIAPIPE_PROFILING=1 --action_env PYTHON_BIN_PATH=\"C://Users//chend//AppData//Local//Programs//Python//Python37//python.exe\" mediapipe/examples/desktop/pose_tracking:pose_tracking_cpu",
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+        },
+
+        {
+            "label": "Face Debug Build",
+            "type": "shell",
+            "command": "bazel build --strip=never --experimental_enable_runfiles -c dbg --define MEDIAPIPE_DISABLE_GPU=1 --action_env PYTHON_BIN_PATH=\"C://Users//chend//AppData//Local//Programs//Python//Python37//python.exe\" mediapipe/examples/desktop/face_mesh:face_mesh_cpu",
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+        },
+
+        {
+            "label": "Face Release Build",
+            "type": "shell",
+            "command": "bazel build --experimental_enable_runfiles -c opt --define MEDIAPIPE_DISABLE_GPU=1 --action_env PYTHON_BIN_PATH=\"C://Users//chend//AppData//Local//Programs//Python//Python37//python.exe\" mediapipe/examples/desktop/face_mesh:face_mesh_cpu",
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+        },
+
+        {
+            "label": "Face Debug Detection Build",
+            "type": "shell",
+            "command": "bazel build --strip=never --experimental_enable_runfiles -c dbg --define MEDIAPIPE_DISABLE_GPU=1 --action_env PYTHON_BIN_PATH=\"C://Users//chend//AppData//Local//Programs//Python//Python37//python.exe\" mediapipe/examples/desktop/face_detection:face_detection_cpu",
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+        },
+
+        {
+            "label": "Face Release Detection Build",
+            "type": "shell",
+            "command": "bazel build --experimental_enable_runfiles -c opt --define MEDIAPIPE_DISABLE_GPU=1 --action_env PYTHON_BIN_PATH=\"C://Users//chend//AppData//Local//Programs//Python//Python37//python.exe\" mediapipe/examples/desktop/face_detection:face_detection_cpu",
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+        },
     ]
 }

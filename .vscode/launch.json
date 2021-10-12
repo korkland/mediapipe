@@ -5,7 +5,7 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "Debug",
+            "name": "Debug_Holistic",
             "type": "cppvsdbg",
             "request": "launch",
             "program": "${workspaceFolder}/bazel-out/x64_windows-dbg/bin/mediapipe/examples/desktop/holistic_tracking/holistic_tracking_cpu.exe",
@@ -20,7 +20,7 @@
             "console": "externalTerminal"
         },
         {
-            "name": "Release",
+            "name": "Release_Holistic",
             "type": "cppvsdbg",
             "request": "launch",
             "program": "${workspaceFolder}/bazel-out/x64_windows-opt/bin/mediapipe/examples/desktop/holistic_tracking/holistic_tracking_cpu.exe",
@@ -33,6 +33,96 @@
             "cwd": "${workspaceFolder}",
             "environment": [],
             "console": "externalTerminal"
-        }
+        },
+        {
+            "name": "Debug_Pose",
+            "type": "cppvsdbg",
+            "request": "launch",
+            "program": "${workspaceFolder}/bazel-out/x64_windows-dbg/bin/mediapipe/examples/desktop/pose_tracking/pose_tracking_cpu.exe",
+            "args": ["--calculator_graph_config_file=${workspaceFolder}/mediapipe/graphs/pose_tracking/pose_tracking_cpu.pbtxt"],
+            "sourceFileMap": {
+                "C:/Users/chend/_bazel_chend/vmp7y5m5/execroot/mediapipe/": "${workspaceFolder}",
+            },
+            "stopAtEntry": false,
+            "preLaunchTask": "Pose Debug Build",
+            "cwd": "${workspaceFolder}/bazel-mediapipe",
+            "environment": [],
+            "console": "externalTerminal"
+        },
+        {
+            "name": "Release_Pose",
+            "type": "cppvsdbg",
+            "request": "launch",
+            "program": "${workspaceFolder}/bazel-out/x64_windows-opt/bin/mediapipe/examples/desktop/pose_tracking/pose_tracking_cpu.exe",
+            "args": ["--calculator_graph_config_file=${workspaceFolder}/mediapipe/graphs/pose_tracking/pose_tracking_cpu.pbtxt"],
+            "sourceFileMap": {
+                "C:/Users/chend/_bazel_chend/vmp7y5m5/execroot/mediapipe/": "${workspaceFolder}",
+            },
+            "stopAtEntry": false,
+            "preLaunchTask": "Pose Release Build",
+            "cwd": "${workspaceFolder}",
+            "environment": [],
+            "console": "externalTerminal"
+        },
+        {
+            "name": "Debug_Face",
+            "type": "cppvsdbg",
+            "request": "launch",
+            "program": "${workspaceFolder}/bazel-out/x64_windows-dbg/bin/mediapipe/examples/desktop/face_mesh/face_mesh_cpu.exe",
+            "args": ["--calculator_graph_config_file=${workspaceFolder}/mediapipe/graphs/face_mesh/face_mesh_desktop_live.pbtxt"],
+            "sourceFileMap": {
+                "C:/Users/chend/_bazel_chend/vmp7y5m5/execroot/mediapipe/": "${workspaceFolder}",
+            },
+            "stopAtEntry": false,
+            "preLaunchTask": "Face Debug Build",
+            "cwd": "${workspaceFolder}/bazel-mediapipe",
+            "environment": [],
+            "console": "externalTerminal"
+        },
+        {
+            "name": "Release_Face",
+            "type": "cppvsdbg",
+            "request": "launch",
+            "program": "${workspaceFolder}/bazel-out/x64_windows-opt/bin/mediapipe/examples/desktop/face_mesh/face_mesh_cpu.exe",
+            "args": ["--calculator_graph_config_file=${workspaceFolder}/mediapipe/graphs/face_mesh/face_mesh_desktop_live.pbtxt"],
+            "sourceFileMap": {
+                "C:/Users/chend/_bazel_chend/vmp7y5m5/execroot/mediapipe/": "${workspaceFolder}",
+            },
+            "stopAtEntry": false,
+            "preLaunchTask": "Face Release Build",
+            "cwd": "${workspaceFolder}",
+            "environment": [],
+            "console": "externalTerminal"
+        },
+        {
+            "name": "Debug_Face_Detection",
+            "type": "cppvsdbg",
+            "request": "launch",
+            "program": "${workspaceFolder}/bazel-out/x64_windows-dbg/bin/mediapipe/examples/desktop/face_detection/face_detection_cpu.exe",
+            "args": ["--calculator_graph_config_file=${workspaceFolder}/mediapipe/graphs/face_detection/face_detection_desktop_live.pbtxt"],
+            "sourceFileMap": {
+                "C:/Users/chend/_bazel_chend/vmp7y5m5/execroot/mediapipe/": "${workspaceFolder}",
+            },
+            "stopAtEntry": false,
+            "preLaunchTask": "Face Debug Detection Build",
+            "cwd": "${workspaceFolder}/bazel-mediapipe",
+            "environment": [],
+            "console": "externalTerminal"
+        },
+        {
+            "name": "Release_Face_Detection",
+            "type": "cppvsdbg",
+            "request": "launch",
+            "program": "${workspaceFolder}/bazel-out/x64_windows-opt/bin/mediapipe/examples/desktop/face_detection/face_detection_cpu.exe",
+            "args": ["--calculator_graph_config_file=${workspaceFolder}/mediapipe/graphs/face_detection/face_detection_desktop_live.pbtxt"],
+            "sourceFileMap": {
+                "C:/Users/chend/_bazel_chend/vmp7y5m5/execroot/mediapipe/": "${workspaceFolder}",
+            },
+            "stopAtEntry": false,
+            "preLaunchTask": "Face Release Detection Build",
+            "cwd": "${workspaceFolder}",
+            "environment": [],
+            "console": "externalTerminal"
+        },
     ]
 }
