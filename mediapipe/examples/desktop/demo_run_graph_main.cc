@@ -30,6 +30,8 @@
 #include <sstream>
 #include <iomanip>
 
+#define RUN_VIDEO
+
 constexpr char kInputStream[] = "input_video";
 constexpr char kOutputStream[] = "output_video";
 constexpr char kWindowName[] = "MediaPipe";
@@ -69,8 +71,8 @@ absl::Status RunMPPGraph() {
   if (!save_video) {
     cv::namedWindow(kWindowName, /*flags=WINDOW_AUTOSIZE*/ 1);
 #if (CV_MAJOR_VERSION >= 3) && (CV_MINOR_VERSION >= 2)
-    capture.set(cv::CAP_PROP_FRAME_WIDTH, 640);
-    capture.set(cv::CAP_PROP_FRAME_HEIGHT, 480);
+    capture.set(cv::CAP_PROP_FRAME_WIDTH, 1280);
+    capture.set(cv::CAP_PROP_FRAME_HEIGHT, 720);
     capture.set(cv::CAP_PROP_FPS, 30);
   }
   #endif
@@ -85,9 +87,9 @@ absl::Status RunMPPGraph() {
   while (grab_frames) {
     // Capture opencv camera or video frame.
     cv::Mat camera_frame_raw;
-    #ifdef _DEBUG
+    #ifdef RUN_VIDEO
       load_video = true;
-      const std::string frames_path = "C:/3D_data/debug_out/Input_frames/720p/inp_frame_";
+      const std::string frames_path = "C:/3D_data/debug_out/Input_frames/chen_720p/inp_frame_";
       std::stringstream ss;
       ss << std::setfill('0') << std::setw(6) << frame_idx;
       const std::string full_path = frames_path + ss.str() + ".png";

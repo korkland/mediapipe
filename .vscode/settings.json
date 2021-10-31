@@ -99,5 +99,6 @@
         "coroutine": "cpp",
         "resumable": "cpp"
     },
-    "cmake.configureOnOpen": false
+    "cmake.configureOnOpen": false,
+    "workbench.useExperimentalGridLayout": true
 }

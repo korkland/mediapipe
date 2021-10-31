@@ -30,6 +30,8 @@
 
 #include "tensorflow/lite/delegates/xnnpack/xnnpack_delegate.h"
 
+
+
 namespace mediapipe {
 namespace api2 {
 
@@ -86,9 +88,6 @@ absl::Status InferenceCalculatorCpuImpl::UpdateContract(
   RET_CHECK(!options.model_path().empty() ^ kSideInModel(cc).IsConnected())
       << "Either model as side packet or model path in options is required.";
 
-  const std::string& model_path = options.model_path(); 
-  // std::cout << model_path << std::endl; // #chen
-
   return absl::OkStatus();
 }
 
@@ -121,6 +120,7 @@ absl::Status InferenceCalculatorCpuImpl::Process(CalculatorContext* cc) {
 
   // Run inference.
   RET_CHECK_EQ(interpreter_->Invoke(), kTfLiteOk);
+  
 
   // Output result tensors (CPU).
   const auto& tensor_indexes = interpreter_->outputs();
@@ -141,8 +141,10 @@ absl::Status InferenceCalculatorCpuImpl::Process(CalculatorContext* cc) {
   const auto end = absl::GetCurrentTimeNanos();
   const auto duration = end-start;
   std::string model_path = cc->Options<mediapipe::InferenceCalculatorOptions>().model_path();
-  LOG(ERROR) << model_path << " : " << duration * 1e-6;
-
+  
+  if(model_path.empty())
+    LOG(ERROR) << model_path << " : " << duration * 1e-6;
+  
   return absl::OkStatus();
 }
 
@@ -155,11 +157,53 @@ absl::Status InferenceCalculatorCpuImpl::Close(CalculatorContext* cc) {
 absl::Status InferenceCalculatorCpuImpl::LoadModel(CalculatorContext* cc) {
   ASSIGN_OR_RETURN(model_packet_, GetModelAsPacket(cc));
   const auto& model = *model_packet_.Get();
-  tflite::ops::builtin::BuiltinOpResolver op_resolver =
-      kSideInCustomOpResolver(cc).GetOr(
-          tflite::ops::builtin::BuiltinOpResolverWithoutDefaultDelegates());
+  tflite::ops::builtin::BuiltinOpResolver op_resolver = kSideInCustomOpResolver(cc).GetOr(tflite::ops::builtin::BuiltinOpResolverWithoutDefaultDelegates());// #chen this is same as {}
 
   tflite::InterpreterBuilder(model, op_resolver)(&interpreter_);
+
+//#chen
+/*
+  {
+    std::unique_ptr<tflite::FlatBufferModel> m_model = nullptr;
+    tflite::ops::builtin::BuiltinOpResolver m_resolver{};
+    std::unique_ptr<tflite::Interpreter> m_interpreter = nullptr;
+    std::string path = "C:/dev/mediaPipeOrig/mediapipe/modules/hand_landmark/hand_landmark_lite.tflite";
+    try
+    {
+      m_model = tflite::FlatBufferModel::BuildFromFile(path.c_str());
+    }
+    catch (const std::exception& ex)
+    {
+      throw std::logic_error("net's configuration has failed!!");
+    }
+
+    try
+    {
+      tflite::InterpreterBuilder(*m_model, m_resolver)(&m_interpreter);
+    }
+    catch (const std::exception& ex)
+    {
+      throw std::logic_error("net's configuration has failed!!");
+    }
+
+    if (m_interpreter->AllocateTensors() != kTfLiteOk)
+    {
+      throw std::logic_error("net's configuration has failed!!");
+    }
+    TfLiteTensor* inp = m_interpreter->input_tensor(0);
+
+    auto start = std::chrono::steady_clock::now();
+    for (int i = 0; i < 1000; i++)
+    {
+      if (m_interpreter->Invoke() != kTfLiteOk)
+      {
+        throw std::logic_error("net's configuration has failed!!");
+      }
+    }
+    auto end = std::chrono::steady_clock::now();
+    std::cout << "NET Warmup Elapsed time in milliseconds : " << std::chrono::duration_cast<std::chrono::microseconds>(end - start).count()/1000.0 << std::endl;
+  }
+*/
   RET_CHECK(interpreter_);
 
 #if defined(__EMSCRIPTEN__)
